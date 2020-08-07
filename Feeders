@@ -1,0 +1,187 @@
+### CubeCreate_Feeders Process from IBM Proven Practices article
+## https://www.ibm.com/developerworks/data/library/cognos/financial_management/analytics/page620.html
+## Copy process into Prolog tab only
+
+## Add Time and Feeders dimensions to Feeders cube
+sCube = 'Feeders';
+sDimFeeders = 'Feeders';
+
+if(dimensionExists(sDimFeeders) = 0);
+  dimensionCreate(sDimFeeders);
+endif;
+
+dimensionElementInsert(sDimFeeders, '', 'A', 'N');
+dimensionElementInsert(sDimFeeders, '', 'B', 'N');
+dimensionElementInsert(sDimFeeders, '', 'A*B', 'N');
+
+dimensionElementInsert(sDimFeeders, '', 'C', 'N');
+dimensionElementInsert(sDimFeeders, '', 'D', 'N');
+dimensionElementInsert(sDimFeeders, '', 'C*D', 'N');
+dimensionElementComponentAdd(sDimFeeders, 'C*D', 'C', 1);
+dimensionElementComponentAdd(sDimFeeders, 'C*D', 'D', 1);
+
+dimensionElementInsert(sDimFeeders, '', 'E', 'N');
+dimensionElementInsert(sDimFeeders, '', 'F', 'N');
+dimensionElementInsert(sDimFeeders, '', 'E*F (For Forecast Months)', 'N');
+
+sDimTime = 'Time';
+
+if(dimensionExists(sDimTime) = 0);
+  dimensionCreate(sDimTime);
+endif;
+
+m1 = 'Jan-10';
+m2 = 'Feb-10';
+m3 = 'Mar-10';
+m4 = 'Apr-10';
+m5 = 'May-10';
+m6 = 'Jun-10';
+m7 = 'Jul-10';
+m8 = 'Aug-10';
+m9 = 'Sep-10';
+m10 = 'Oct-10';
+m11 = 'Nov-10';
+m12 = 'Dec-10';
+q1 = 'Q1-10';
+q2 = 'Q2-10';
+q3 = 'Q3-10';
+q4 = 'Q4-10';
+
+dimensionElementInsert(sDimTime, '', m1, 'N');
+dimensionElementInsert(sDimTime, '', m2, 'N');
+dimensionElementInsert(sDimTime, '', m3, 'N');
+dimensionElementInsert(sDimTime, '', m4, 'N');
+dimensionElementInsert(sDimTime, '', m5, 'N');
+dimensionElementInsert(sDimTime, '', m6, 'N');
+dimensionElementInsert(sDimTime, '', m7, 'N');
+dimensionElementInsert(sDimTime, '', m8, 'N');
+dimensionElementInsert(sDimTime, '', m9, 'N');
+dimensionElementInsert(sDimTime, '', m10, 'N');
+dimensionElementInsert(sDimTime, '', m11, 'N');
+dimensionElementInsert(sDimTime, '', m12, 'N');
+dimensionElementInsert(sDimTime, '', q1, 'N');
+dimensionElementInsert(sDimTime, '', q2, 'N');
+dimensionElementInsert(sDimTime, '', q3, 'N');
+dimensionElementInsert(sDimTime, '', q4, 'N');
+
+dimensionElementComponentAdd(sDimTime, q1, m1, 1);
+dimensionElementComponentAdd(sDimTime, q1, m2, 1);
+dimensionElementComponentAdd(sDimTime, q1, m3, 1);
+dimensionElementComponentAdd(sDimTime, q2, m4, 1);
+dimensionElementComponentAdd(sDimTime, q2, m5, 1);
+dimensionElementComponentAdd(sDimTime, q2, m6, 1);
+dimensionElementComponentAdd(sDimTime, q3, m7, 1);
+dimensionElementComponentAdd(sDimTime, q3, m8, 1);
+dimensionElementComponentAdd(sDimTime, q3, m9, 1);
+dimensionElementComponentAdd(sDimTime, q4, m10, 1);
+dimensionElementComponentAdd(sDimTime, q4, m11, 1);
+dimensionElementComponentAdd(sDimTime, q4, m12, 1);
+
+attrInsert(sDimTime, '', 'Actual Flag', 'S');
+
+if(cubeExists(sCube) = 0);
+  cubeCreate(sCube, sDimFeeders, sDimTime);
+endif;
+
+### OverFeedSource Cube
+
+sCube = 'OverFeedSource';
+sCube2 = 'OverFeeds';
+
+sDimFeeders = 'OverFeeds';
+
+if(dimensionExists(sDimFeeders) = 0);
+  dimensionCreate(sDimFeeders);
+endif;
+
+dimensionElementInsert(sDimFeeders, '', 'A', 'N');
+dimensionElementInsert(sDimFeeders, '', 'B', 'N');
+dimensionElementInsert(sDimFeeders, '', 'A*B', 'N');
+
+sDimProduct = 'Product';
+
+if(dimensionExists(sDimProduct) = 0);
+  dimensionCreate(sDimProduct);
+endif;
+
+p1 = 'P1';
+p2 = 'P2';
+p3 = 'P3';
+p4 = 'P4';
+p5 = 'P5';
+p6 = 'P6';
+pg1 = 'PG1';
+pg2 = 'PG2';
+pt = 'Product Total';
+
+dimensionElementInsert(sDimProduct, '', p1, 'N');
+dimensionElementInsert(sDimProduct, '', p2, 'N');
+dimensionElementInsert(sDimProduct, '', p3, 'N');
+dimensionElementInsert(sDimProduct, '', p4, 'N');
+dimensionElementInsert(sDimProduct, '', p5, 'N');
+dimensionElementInsert(sDimProduct, '', p6, 'N');
+dimensionElementInsert(sDimProduct, '', pg1, 'N');
+dimensionElementInsert(sDimProduct, '', pg2, 'N');
+dimensionElementInsert(sDimProduct, '', pt, 'N');
+
+dimensionElementComponentAdd(sDimProduct, pg1, p1, 1);
+dimensionElementComponentAdd(sDimProduct, pg1, p2, 1);
+dimensionElementComponentAdd(sDimProduct, pg1, p3, 1);
+dimensionElementComponentAdd(sDimProduct, pg2, p4, 1);
+dimensionElementComponentAdd(sDimProduct, pg2, p5, 1);
+dimensionElementComponentAdd(sDimProduct, pg2, p6, 1);
+
+dimensionElementComponentAdd(sDimProduct, pt, pg1, 1);
+dimensionElementComponentAdd(sDimProduct, pt, pg2, 1);
+
+if(cubeExists(sCube)=0);
+  cubeCreate(sCube, sDimTime, sDimProduct, sDimFeeders);
+endif;
+
+if(cubeExists(sCube2)=0);
+  cubeCreate(sCube2, sDimTime, sDimProduct, sDimFeeders);
+endif;
+
+##### Part Two #####
+
+sCube = 'FeederSource';
+sDimFeederSource = 'FeederSource';
+
+if(dimensionExists(sDimFeederSource) = 0);
+  dimensionCreate(sDimFeederSource);
+endif;
+
+ele1 = 'Source';
+
+dimensionElementInsert(sDimFeederSource, '', ele1, 'N');
+
+sDimValue = 'Value';
+
+if(dimensionExists(sDimValue) = 0);
+  dimensionCreate(sDimValue);
+endif;
+
+ele2 = 'Value';
+
+dimensionElementInsert(sDimValue, '', ele2, 'N');
+
+if(cubeExists(sCube)=0);
+  cubeCreate(sCube, sDimValue, sDimFeederSource);
+endif;
+
+## FeederTarget
+
+sCube = 'FeederTarget';
+sDimFeederTarget = 'FeederTarget';
+
+if(dimensionExists(sDimFeederTarget) = 0);
+  dimensionCreate(sDimFeederTarget);
+endif;
+
+ele1 = 'Target';
+
+dimensionElementInsert(sDimFeederTarget, '', ele1, 'N');
+
+if(cubeExists(sCube)=0);
+  cubeCreate(sCube, sDimFeederTarget, sDimTime);
+endif;
